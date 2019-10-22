@@ -71,13 +71,11 @@ namespace Predica_zadanie.Controllers
 
         private readonly IConfiguration configuration;
         private readonly WeatherContext weatherContext;
-        private readonly IServiceProvider serviceProvider;
 
-        public WeatherController (IConfiguration configuration, WeatherContext context, IServiceProvider serviceProvider)
+        public WeatherController (IConfiguration configuration, WeatherContext context)
         {
             this.configuration = configuration;
             weatherContext = context;
-            this.serviceProvider = serviceProvider;
         }
 
         [HttpGet("api/weatherRefresh")]
