@@ -1,0 +1,35 @@
+﻿@model Predica_zadanie.ViewModels.WeatherRecordsDctionaryViewModel.WeatherRecordListWithLocationId
+
+<div id="WeatherTable_@Model.LocationId" data-page_number="@Model.List.PageIndex">
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th scope="col">Date & Time</th>
+                <th scope="col">Description</th>
+                <th scope="col">Current temperature</th>
+                <th scope="col">Min temperature</th>
+                <th scope="col">Max temperature</th>
+            </tr>
+        </thead>
+
+        <tbody id="@Model.LocationId">
+            @foreach (var WeatherRecord in Model.List) {
+                <tr>
+                    <td class="CreateDateTime">@WeatherRecord.CreateDateTime</td>
+                    <td class="Description">@WeatherRecord.Description</td>
+                    <td class="TempCurrent">@WeatherRecord.TempCurrent</td>
+                    <td class="TempMin">@WeatherRecord.TempMin</td>
+                    <td class="TempMax">@WeatherRecord.TempMax</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @{
+        var prevDisabled = !Model.List.HasPreviousPage ? "disabled" : "";
+        var nextDisabled = !Model.List.HasNextPage ? "disabled" : "";
+    }
+
+    <a class="btn btn-default @prevDisabled changePageAjax" style="cursor:pointer" data-target_url="@Url.Action("Index", "Weather", new { pageNumber=Model.List.PageIndex - 1, locationId=Model.LocationId })">Previous</a>
+    <a class="btn btn-default @nextDisabled changePageAjax" style="cursor:pointer" data-target_url="@Url.Action("Index", "Weather", new { pageNumber=Model.List.PageIndex + 1, locationId=Model.LocationId })">Next</a>
+</div>

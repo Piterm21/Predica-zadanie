@@ -3,24 +3,46 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Predica_zadanie.Data;
 using Predica_zadanie.Models;
+using Predica_zadanie.Utilities;
+using Predica_zadanie.ViewModels;
+using static Predica_zadanie.ViewModels.WeatherRecordsDctionaryViewModel;
 
 namespace Predica_zadanie.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly WeatherContext weatherContext;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(WeatherContext context)
         {
-            _logger = logger;
+            weatherContext = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            WeatherRecordsDctionaryViewModel weatherRecordsViewModel = new WeatherRecordsDctionaryViewModel();
+            var locations = weatherContext.Locations.ToArray();
+
+            foreach (Location location in locations) {
+                weatherRecordsViewModel.Dictionary.Add(
+                    location.Name,
+                    new WeatherRecordListWithLocationId(
+                        location.Id,
+                        await PaginatedList<WeatherRecord>.CreateAsync(
+                            weatherContext.WeatherRecords
+                                .OrderByDescending(w => w.CreateDateTime)
+                                .Where(w => w.Location.Id == location.Id), 1, 10)
+                        )
+                );
+            }
+            
+            return View(weatherRecordsViewModel);
         }
 
         public IActionResult Privacy()

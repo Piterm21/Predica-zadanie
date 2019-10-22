@@ -2,7 +2,22 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@model Predica_zadanie.ViewModels.WeatherRecordsDctionaryViewModel
+@{
+    string showCollapsed = "show";
+}
+
+<div class="text-center accordion" id="locationAccordion">
+    @foreach (var WeatherRecordList in @Model.Dictionary) {
+
+        <div class="card">
+            <div class="card-header @showCollapsed" style="cursor:pointer" data-toggle="collapse" data-target="#Weather_@WeatherRecordList.Value.LocationId">@WeatherRecordList.Key</div>
+            <div class="card-body collapse @showCollapsed" id="Weather_@WeatherRecordList.Value.LocationId" data-parent="#locationAccordion">
+                @await Html.PartialAsync("/Views/Weather/PaginatedWeatherRecordList.cshtml", WeatherRecordList.Value)
+            </div>
+        </div>
+        {
+            showCollapsed = "collapsed";
+        }
+    }
 </div>
